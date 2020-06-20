@@ -8,25 +8,26 @@
   </div>
 </template>
 
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
+<script>
+  import axios from 'axios';
+  import store from './store'
+  import { LOGOUT } from "./store/types";
+  export default {
+    created: function () {
+      axios.interceptors.response.use(function (response) {
+        return response;
+      }, function (err) {
+        if (err.response?.status === 401 && err.response?.config && !err.response?.config.__isRetryRequest) {
+          // if you ever get an unauthorized, logout the user
+          store.dispatch(LOGOUT)
+          // you can also redirect to /login if needed !
+        }
+        throw err;
+      });
     }
   }
-}
+</script>
+
+<style lang="scss">
+@import './assets/reset.scss'
 </style>
