@@ -4,8 +4,10 @@
       <h1>Вход</h1>
       <input type="text" v-model="email" required class="login__form_username" placeholder="Email">
       <label>
-        <input type="password" v-model="password" required class="login__form_password" placeholder="Пароль">
-        <i class="far fa-eye"></i>
+        <input :type="passwordType" v-model="password" required class="login__form_password" placeholder="Пароль">
+        <span @click="switchVisibilityPassword">
+          <i class="far fa-eye"></i>
+        </span>
       </label>
       <button type="submit">Войти</button>
     </form>
@@ -21,7 +23,8 @@ export default {
   data() {
     return {
       email: '',
-      password: ''
+      password: '',
+      passwordType: 'password'
     }
   },
   computed: {
@@ -30,11 +33,14 @@ export default {
     }
   },
   methods: {
-    login: function() {
+    login() {
       const { email, password } = this
       this.$store.dispatch(AUTH_REQ, { email, password }).then(() => {
-        this.$router.push('/about')
+        this.$router.push('/table')
       })
+    },
+    switchVisibilityPassword() {
+      this.passwordType = this.passwordType === 'password' ? 'text' : 'password'
     }
   }
 };
@@ -44,7 +50,7 @@ export default {
 .login {
   padding: 30px 60px;
   background: #fff;
-  box-shadow: 0px 0px 31px 0px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 0 31px 0 rgba(0, 0, 0, 0.4);
   &__form {
     display: flex;
     flex-direction: column;
@@ -53,6 +59,16 @@ export default {
       font-size: 32px;
       font-weight: bold;
       margin-bottom: 30px;
+    }
+    label {
+      position: relative;
+      span {
+        position: absolute;
+        transform: translate(0, -100%);
+        cursor: pointer;
+        top: 50%;
+        right: 10px;
+      }
     }
     input {
       height: 40px;

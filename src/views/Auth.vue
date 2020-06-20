@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="auth">
     <Login />
   </div>
 </template>
@@ -16,9 +16,10 @@ export default {
 </script>
 
 <style scoped lang="scss">
-  .home {
-    display: flex;
-    align-items: center;
-    flex-direction: column;
+  .auth {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
 </style>
