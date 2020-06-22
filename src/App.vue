@@ -14,9 +14,7 @@
         return response;
       }, function (err) {
         if (err.response?.status === 401 && err.response?.config && !err.response?.config.__isRetryRequest) {
-          // if you ever get an unauthorized, logout the user
           store.dispatch(LOGOUT)
-          // you can also redirect to /login if needed !
         }
         throw err;
       });
@@ -26,8 +24,12 @@
 
 <style lang="scss">
   @import './assets/reset.scss';
+  @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
   #app {
     position: relative;
     height: 100%;
+  }
+  html, body {
+    font-family: 'Roboto', sans-serif;
   }
 </style>

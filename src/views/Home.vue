@@ -1,6 +1,6 @@
 <template>
     <div>
-        <h1>Welcome!</h1>
+        <router-link to="/auth">Войти</router-link>
     </div>
 </template>
 

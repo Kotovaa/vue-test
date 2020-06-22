@@ -10,7 +10,8 @@ import {
   AUTH_SUCCESS,
   LOGOUT,
   REFRESH_TOKEN,
-  GET_DATA
+  GET_DATA,
+  GET_DATA_BY_FILTER
 } from "./types";
 
 const get_tokens_url = 'https://zonesmart.su/api/auth/jwt/create/'
@@ -21,7 +22,7 @@ export default new Vuex.Store({
     token: localStorage.getItem('user-token') || '',
     status: '',
     error: '',
-    table_items: {}
+    table_items: {},
   },
   mutations: {
     [AUTH_REQ]: (state) => {
@@ -81,7 +82,7 @@ export default new Vuex.Store({
           commit(AUTH_SUCCESS, accessToken)
         })
     },
-    [GET_DATA]: async ({ commit }) => {
+    [GET_DATA]: async ({ commit, dispatch }) => {
       const config = {
         headers: { 'Authorization': `JWT ${localStorage.getItem('user-token')}` },
         params: {
@@ -95,7 +96,30 @@ export default new Vuex.Store({
           commit(GET_DATA, resp.data.results)
         })
         .catch(e => {
-          console.log(e)
+          if (e.response.data.code == 'token_not_valid') {
+            dispatch(REFRESH_TOKEN)
+            dispatch(GET_DATA_BY_FILTER, filter)
+          }
+        })
+    },
+    [GET_DATA_BY_FILTER]: async ({ commit, dispatch }, filter) => {
+      const config = {
+        headers: { 'Authorization': `JWT ${localStorage.getItem('user-token')}` },
+        params: {
+          limit: +filter.limit,
+          offset: +filter.offset,
+          search: filter.search
+        }
+      }
+      await axios.get(get_table_data, config)
+        .then(resp => {
+          commit(GET_DATA, resp.data.results)
+        })
+        .catch(e => {
+          if (e.response.data.code == 'token_not_valid') {
+            dispatch(REFRESH_TOKEN)
+            dispatch(GET_DATA_BY_FILTER, filter)
+          }
         })
     }
   },
