@@ -11,7 +11,7 @@ import {
   LOGOUT,
   REFRESH_TOKEN,
   GET_DATA,
-  GET_DATA_BY_FILTER
+  GET_DATA_BY_FILTER, SET_TOTAL
 } from "./types";
 
 const get_tokens_url = 'https://zonesmart.su/api/auth/jwt/create/'
@@ -22,6 +22,11 @@ export default new Vuex.Store({
     token: localStorage.getItem('user-token') || '',
     status: '',
     error: '',
+    count: {
+      limit: '',
+      offset: '',
+      total: '',
+    },
     table_items: {},
   },
   mutations: {
@@ -45,6 +50,12 @@ export default new Vuex.Store({
     },
     [GET_DATA]: (state, payload) => {
       state.table_items = payload
+    },
+    [SET_TOTAL]: (state, { limit, offset, count }) => {
+      console.log()
+      state.count.limit = limit
+      state.count.offset = offset
+      state.count.total = count
     }
   },
   actions: {
@@ -86,7 +97,7 @@ export default new Vuex.Store({
       const config = {
         headers: { 'Authorization': `JWT ${localStorage.getItem('user-token')}` },
         params: {
-          limit: '',
+          limit: 10,
           offset: '',
           search: ''
         }
@@ -94,11 +105,12 @@ export default new Vuex.Store({
       await axios.get(get_table_data, config)
         .then(resp => {
           commit(GET_DATA, resp.data.results)
+          commit(SET_TOTAL, resp.data)
         })
         .catch(e => {
           if (e.response.data.code == 'token_not_valid') {
             dispatch(REFRESH_TOKEN)
-            dispatch(GET_DATA_BY_FILTER, filter)
+            dispatch(GET_DATA)
           }
         })
     },
@@ -106,7 +118,7 @@ export default new Vuex.Store({
       const config = {
         headers: { 'Authorization': `JWT ${localStorage.getItem('user-token')}` },
         params: {
-          limit: +filter.limit,
+          limit: 10,
           offset: +filter.offset,
           search: filter.search
         }
@@ -114,6 +126,7 @@ export default new Vuex.Store({
       await axios.get(get_table_data, config)
         .then(resp => {
           commit(GET_DATA, resp.data.results)
+          commit(SET_TOTAL, resp.data)
         })
         .catch(e => {
           if (e.response.data.code == 'token_not_valid') {
@@ -127,7 +140,8 @@ export default new Vuex.Store({
     is_authenticated: state => !!state.token,
     auth_status: state => state.status,
     get_error: state => state.error,
-    get_table_data: state => state.table_items
+    get_table_data: state => state.table_items,
+    get_total: state => state.count.total
   },
   modules: {
   },

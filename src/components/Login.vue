@@ -1,18 +1,24 @@
-<template>
-  <div class="login">
-    <form class="login__form" @submit.prevent="login">
-      <h1>Вход</h1>
-      <input type="text" v-model="email" required class="login__form_username" placeholder="Email">
-      <label>
-        <input :type="passwordType" v-model="password" required class="login__form_password" placeholder="Пароль">
-        <span @click="switchVisibilityPassword">
-          <i class="far fa-eye"></i>
-        </span>
-      </label>
-      <button type="submit">Войти</button>
-    </form>
-    <span>{{ getErr }}</span>
-  </div>
+<template lang="pug">
+  .login
+    form.login__form(@submit.prevent="login")
+      h1 Вход
+      input.login__form_username(
+        type='text'
+        v-model='email'
+        required
+        placeholder='Email'
+      )
+      label
+        input.login__form_password(
+          :type="passwordType"
+          v-model="password"
+          required
+          placeholder="Пароль"
+        )
+        span(@click="switchVisibilityPassword")
+          i.far.fa-eye
+      button(type='submit') Войти
+    span {{getErr}}
 </template>
 
 <script>

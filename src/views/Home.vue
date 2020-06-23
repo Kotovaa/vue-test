@@ -1,7 +1,6 @@
-<template>
-    <div>
-        <router-link to="/auth">Войти</router-link>
-    </div>
+<template lang="pug">
+    div
+      router-link(to='/auth') Войти
 </template>
 
 <script>
