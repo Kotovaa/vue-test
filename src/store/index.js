@@ -51,11 +51,10 @@ export default new Vuex.Store({
     [GET_DATA]: (state, payload) => {
       state.table_items = payload
     },
-    [SET_TOTAL]: (state, { limit, offset, count }) => {
-      console.log()
+    [SET_TOTAL]: (state, { limit, offset, total }) => {
       state.count.limit = limit
       state.count.offset = offset
-      state.count.total = count
+      state.count.total = total
     }
   },
   actions: {
@@ -98,14 +97,14 @@ export default new Vuex.Store({
         headers: { 'Authorization': `JWT ${localStorage.getItem('user-token')}` },
         params: {
           limit: 10,
-          offset: '',
+          offset: 0,
           search: ''
         }
       }
       await axios.get(get_table_data, config)
         .then(resp => {
           commit(GET_DATA, resp.data.results)
-          commit(SET_TOTAL, resp.data)
+          commit(SET_TOTAL, { total : resp.data.count })
         })
         .catch(e => {
           if (e.response.data.code == 'token_not_valid') {
@@ -126,7 +125,12 @@ export default new Vuex.Store({
       await axios.get(get_table_data, config)
         .then(resp => {
           commit(GET_DATA, resp.data.results)
-          commit(SET_TOTAL, resp.data)
+          let pagination = {
+            limit: 10,
+            offset: +filter.offset,
+            total: resp.data.count
+          }
+          commit(SET_TOTAL, pagination)
         })
         .catch(e => {
           if (e.response.data.code == 'token_not_valid') {
@@ -141,7 +145,7 @@ export default new Vuex.Store({
     auth_status: state => state.status,
     get_error: state => state.error,
     get_table_data: state => state.table_items,
-    get_total: state => state.count.total
+    get_total: state => state.count
   },
   modules: {
   },

@@ -87,41 +87,20 @@
               div ${{ item.total_price }}
           tr(v-if="item.items && opened.includes(item.id)")
             td(colspan="10")
-              table.subtable(
-                width="100%"
-                cellpadding="0"
-                cellspacing="0"
-                border="0"
-              )
-                thead
-                  tr
-                    th
-                      div Название
-                    th
-                      div Цена
-                    th
-                      div Стоимость
-                tbody
-                  tr(v-for="i in item.items")
-                    td
-                      div {{ i.title }}
-                    td
-                      div {{ i.price }}
-                    td
-                      div {{ i.sku }}
-    .pagination
-      .pagination_arrows
-        .pagination_prev(v-if="filt.offset > 0" @click="prev()")
-          i.fa.fa-arrow-left
-        p 1-10 из {{ getTotalItems }}
-        .pagination_next(@click="next()")
-          i.fa.fa-arrow-right
+              Subtable(:items="item.items")
+    Pagination(:filt="filt")
 </template>
 <script>
-  import {LOGOUT, GET_DATA, GET_DATA_BY_FILTER} from "../store/types";
+  import {GET_DATA, GET_DATA_BY_FILTER} from "../store/types";
   import moment from 'moment'
+  import Pagination from '@/components/Pagination'
+  import Subtable from '@/components/Subtable'
 
   export default {
+    components: {
+      Pagination,
+      Subtable
+    },
     data() {
       return {
         opened: [],
@@ -136,9 +115,6 @@
     computed: {
       getTableData() {
         return this.$store.getters.get_table_data
-      },
-      getTotalItems() {
-        return this.$store.getters.get_total
       },
       selectAll: {
         get: function() {
@@ -179,14 +155,6 @@
       },
       remove(ids) {
         console.log('Удаляю', ids)
-      },
-      prev() {
-        this.filt.offset--
-        this.$store.dispatch(GET_DATA_BY_FILTER, this.filt)
-      },
-      next() {
-        this.filt.offset++
-        this.$store.dispatch(GET_DATA_BY_FILTER, this.filt)
       }
     },
     mounted() {
@@ -194,7 +162,7 @@
     }
   }
 </script>
-<style scoped lang="scss">
+<style lang="scss">
   .table {
     background: #F6F9FC;
     padding: 33px 30px;
@@ -270,7 +238,6 @@
     table {
       thead {
         background: #FFFFFF;
-        border-radius: 6px;
         th {
           color: rgba(19,39,57, .5);
           font-size: 12px;
@@ -366,66 +333,6 @@
       color: #152739;
       font-size: 36px;
       line-height: 43px;
-    }
-    .subtable {
-      padding-left: 63px;
-      thead {
-        background: #F6F9FC;
-        tr {
-          th {
-            width: auto !important;
-            &:first-child {
-              div { padding-left: 98px; }
-            }
-            div {
-              padding: 28px 0 18px;
-              background: #F6F9FC;
-              text-align: center;
-            }
-          }
-        }
-      }
-      tbody {
-        tr {
-          &:last-child {
-            td {
-              div {
-                margin-bottom: 20px;
-              }
-            }
-          }
-          td {
-            width: auto !important;
-            &:first-child {
-              div { margin-left: 68px; }
-            }
-            div {
-              margin-top: 0;
-              font-size: 12px;
-              line-height: 14px;
-              color: #132739;
-            }
-          }
-        }
-      }
-    }
-  }
-  .pagination {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
-    margin-top: 15px;
-    p {
-      font-size: 14px;
-      line-height: 17px;
-      color: #152739;
-      margin: 0 10px;
-    }
-    &_arrows {
-      display: flex;
-      flex-direction: row;
-      > div { cursor: pointer }
     }
   }
   *:before, *:after {
