@@ -5,14 +5,7 @@
       .table__head_btns
         button.table__head_send.table__head_btn(type="button") Отправления
         button.table__head_export.table__head_btn(type="button") Экспортировать
-    .table__filter
-      button(@click="search()") Фильтр
-      label
-        input(
-          type="text"
-          v-model="filt.search"
-        )
-        i.fa.fa-search
+    TableSearch(:filt="filt")
     table(
       width="100%"
       cellspacing="0"
@@ -95,9 +88,11 @@
   import moment from 'moment'
   import Pagination from '@/components/Pagination'
   import Subtable from '@/components/Subtable'
+  import TableSearch from "@/components/TableSearch";
 
   export default {
     components: {
+      TableSearch,
       Pagination,
       Subtable
     },
@@ -147,9 +142,6 @@
       formatDate(date) {
         return moment(date).format('DD-MM-YYYY')
       },
-      search() {
-        this.$store.dispatch(GET_DATA_BY_FILTER, this.filt)
-      },
       refresh(ids) {
         console.log('Обновляю', ids)
       },
@@ -195,44 +187,6 @@
       &_export {
         background: #3CC8AE;
         margin-left: 10px;
-      }
-    }
-    &__filter {
-      display: flex;
-      flex-direction: row;
-      justify-content: flex-start;
-      align-items: center;
-      margin: 41px 0 21px;
-      button {
-        background: #132739;
-        height: 52px;
-        text-align: center;
-        cursor: pointer;
-        border-radius: 4px;
-        color: #fff;
-        font-size: 14px;
-        line-height: 52px;
-        text-transform: uppercase;
-        border: 0;
-        margin-right: 29px;
-      }
-      label {
-        height: 52px;
-        width: 100%;
-        position: relative;
-        input {
-          width: 100%;
-          height: 100%;
-          border: 1px solid #C5C7CD;
-          background: #fff;
-          padding-left: 15px;
-        }
-        svg {
-          position: absolute;
-          right: 15px;
-          top: 50%;
-          transform: translate(0, -50%);
-        }
       }
     }
     table {
